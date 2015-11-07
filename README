@@ -1,0 +1,101 @@
+=== Patching a Partition ===
+
+sh$ adb reboot ; ./handshake.py
+
+sh$ cmp -l system.orig.img system.root.img > system.diff
+
+sh$ ./patch_mmc.sh 0x00000000058e0000 system.root.img system.diff
+
+NOTE: Cut and restore power to exit the preloader
+
+Once you have root you can just write the file to the partition to restore.
+
+adb$ cat system.orig.img > /dev/block/platform/mtk-msdc.0/by-name/system
+adb$ reboot
+
+
+=== Modifying a File ===
+
+NOTE: system partition @ 0x00000000058e0000
+
+adb$ filefrag -v /system/bin/logcat_log.sh
+Filesystem type is: ef53
+File size of /system/bin/logcat_log.sh is 587 (1 block of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:        0..       0:     307248..    307248:      1:             last,eof
+/system/bin/logcat_log.sh: 1 extent found
+
+adb$ reboot
+
+sh$ ./handshake.py
+
+sh$ ./read_mmc.py $((0x00000000058e0000+(307248*4096))) $((1*4096)) file.out
+
+sh$ <editor> file.out
+
+sh$ ./write_mmc.py $((0x00000000058e0000+(307248*4096))) file.out
+
+NOTE: It's a good idea to keep the original contents backed up
+
+NOTE: The non-zero'd contents should be the same length as the original file
+and also the overall file size, (multiple of 4096 normally)
+
+TIP: You can use an invalid read to exit the preloader although you have to
+wait for a 5 second timeout before it reboots. EX: ./read32.py 0 1
+
+
+=== Initial Rooting ===
+
+To run commands on the device as root you need to initially patch a service
+script that runs within the init context (others work but you can do less).
+One such script is /system/bin/logcat_log.sh. Using the procedure above you
+can modify the file to eval an android parameter of your choosing.
+
+eval `getprop debug.log.command`
+
+For the patched logcat_log.sh script above you could run a command using:
+
+adb$ setprop debug.log.command "date > /data/out"
+adb$ setprop debug.log.logcat.enable y
+
+To load a kernel module you need to first get the file into a location and
+context that the service script can read, for example /data. This is done
+using a similar trick to modifying the flash contents in the preloader.
+
+dd if=/dev/block/mmcblk0p15 of=/data/file.ko \
+    bs=1 skip=$((66528*4096)) count=128371
+
+NOTE: Here you use the actual file size not the block based size
+
+FYI: I've never had to copy a file with more than 1 extent. Not sure what
+would need to change in the procedure for that case.
+
+Once you have the module in /data you simply run "insmod /data/file.ko"
+
+Once SELinux is in permissive mode you can execute su to get a root adb shell.
+You will need to first copy the su binary from the SuperSU update zip package.
+One copy of su should be named daemonsu and other just su. To then enable su
+use the following setup commands:
+
+chown root.root /data/su
+chmod 6755 /data/su
+chmod 755 /data/daemonsu
+/data/daemonsu --auto-daemon &
+
+You can then run /data/su to become root and then run the normal SuperSU update
+script. To run the update script you will need to create /tmp and mount it as
+tmpfs and also have unzip in your path.
+
+
+=== Contents ===
+
+changed_blks.py - Parses "cmp -l" output, prints the changed blocks w/ length
+filefrag        - Utility for finding file physical offsets (ext4 only)
+handshake.py    - Handshakes and halts the preloader during boot
+partinfo.txt    - Addresses and sizes for each MMC partition
+patch_mmc.sh    - Patches blocks from an image file based on a change list
+read32.py       - Read words from an address in the preloader
+read_mmc.py     - Read to a file from an offset within the MMC flash
+seldis          - SELinux disable/permissive kernel module source
+write32.py      - Write words to an address in the preloader
+write_mmc.py    - Write from a file to an offset within the MMC flash

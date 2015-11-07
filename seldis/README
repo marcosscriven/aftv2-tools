@@ -1,0 +1,9 @@
+NOTE: You need to first build the kernel for the Amazon Fire TV Gen 2
+
+To build the module:
+
+$ make -C <path_to>/android_kernel_amazon_sloane ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- M=$(pwd) modules
+
+To clean the source directory:
+
+$ make -C <path_to>/android_kernel_amazon_sloane ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- M=$(pwd) clean
