@@ -92,6 +92,7 @@ tmpfs and also have unzip in your path.
 changed_blks.py - Parses "cmp -l" output, prints the changed blocks w/ length
 filefrag        - Utility for finding file physical offsets (ext4 only)
 handshake.py    - Handshakes and halts the preloader during boot
+md5sums.txt     - MD5 sums for all the stock partitions (5.0.3.1)
 partinfo.txt    - Addresses and sizes for each MMC partition
 patch_mmc.sh    - Patches blocks from an image file based on a change list
 read32.py       - Read words from an address in the preloader
