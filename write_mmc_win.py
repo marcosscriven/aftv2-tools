@@ -4,7 +4,13 @@ import sys, os
 import serial
 import struct
 
-PORT       = "COM20"
+if os.path.exists("comport.txt"):
+    fo = open("comport.txt", "r")
+    PORT = fo.read()
+    fo.close()
+else:
+    PORT       = "COM19"
+    
 BAUD       = 115200
 BASE_ADDR  = 0x11230000 # mtk-msdc.0
 BLOCK_SIZE = 512 # bytes
