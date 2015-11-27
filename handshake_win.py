@@ -10,7 +10,6 @@ import glob
 #PORT = "COM20"
 BAUD = 115200
 
-
 def serial_ports():
     """ Lists serial port names
 
@@ -51,7 +50,7 @@ if __name__ == '__main__':
             break
         time.sleep(0.25)
 
-print (newport)
+print (newport[0])
 dev = serial.Serial(newport[0], BAUD)
 
 

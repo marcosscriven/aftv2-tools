@@ -9,7 +9,7 @@ if os.path.exists("comport.txt"):
     PORT = fo.read()
     fo.close()
 else:
-    PORT       = "COM20"
+    PORT       = "COM19"
     
 BAUD       = 115200
 BASE_ADDR  = 0x11230000 # mtk-msdc.0
