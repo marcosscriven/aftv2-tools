@@ -1,46 +1,98 @@
 #!/usr/bin/env python3
 
-import os
+import sys
 import time
 import serial
+import glob
 
-PORT = "/dev/ttyACM0"
 BAUD = 115200
 
-while True:
+def serial_ports ():
+    """ Lists available serial ports
 
-    if os.path.exists(PORT):
-        break
+        :raises EnvironmentError:
+            On unsupported or unknown platforms
+        :returns:
+            A set containing the serial ports available on the system
+    """
 
-    time.sleep(0.25)
+    if sys.platform.startswith("win"):
+        ports = [ "COM{0:d}".format(i + 1) for i in range(256) ]
+    elif sys.platform.startswith("linux"):
+        ports = glob.glob("/dev/ttyACM*")
+    elif sys.platform.startswith("darwin"):
+        ports = glob.glob("/dev/cu.usbmodem*")
+    else:
+        raise EnvironmentError("Unsupported platform")
 
-dev = serial.Serial(PORT, BAUD)
+    result = set()
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.add(port)
+        except (OSError, serial.SerialException):
+            pass
 
-def print_hex (data):
+    return result
 
-    print(len(data), end=": ")
-    print(" ".join(hex(x) for x in data))
+# serial checker
+def check (test, gold):
+    if test != gold:
+        sys.stderr.write("ERROR: Serial protocol mismatch\n")
+        sys.exit(1)
 
+# write then read 1 byte
 def write8 (out_str):
-
-    print_hex(out_str)
     dev.write(out_str)
     in_str = dev.read()
-    print_hex(in_str)
-
     return in_str
 
-while True:
+# initiate mtk preloader handshake
+def handshake ():
 
-    c = write8(b'\xa0')
-    if c == b'\x5f':
-        break
-    dev.flushInput()
+    # look for start byte
+    while True:
+        c = write8(b'\xa0')
+        if c == b'\x5f':
+            break
+        dev.flushInput()
 
-write8(b'\x0a')
-write8(b'\x50')
-write8(b'\x05')
+    # complete sequence
+    check(write8(b'\x0a'), b'\xf5')
+    check(write8(b'\x50'), b'\xaf')
+    check(write8(b'\x05'), b'\xfa')
 
-print("Handshake Complete!")
+if __name__ == "__main__":
+
+    port = None
+
+    print("Waiting for preloader...")
+
+    # detect preloader port
+    old = serial_ports()
+    while True:
+        new = serial_ports()
+
+        # port added
+        if new > old:
+            port = (new - old).pop()
+            break
+        # port removed
+        elif old > new:
+            old = new
+
+        time.sleep(0.5)
+
+    print("Found port = " + port)
+
+    dev = serial.Serial(port, BAUD)
+    handshake()
+
+    print("Handshake complete!")
+
+    # save port to file
+    with open("comport.txt", "w") as out:
+        out.write(port)
 
 # vim: ai et ts=4 sts=4 sw=4
