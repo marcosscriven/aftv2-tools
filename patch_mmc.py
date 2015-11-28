@@ -9,8 +9,6 @@ import re
 
 # Patch MMC logic
 filelist = (sorted(glob.glob('patch_*.img')))
-print (filelist)
-print (filelist[0])
 
 for file in filelist:
     print ("current file: ", file)
