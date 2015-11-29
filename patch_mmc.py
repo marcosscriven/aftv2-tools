@@ -20,7 +20,7 @@ for file in filelist:
     # tokenize filename splitting on _ and . to find pysh addr 2nd last token
     tokens = re.split("[_.]", file)
     #print ("tokens:", tokens)
-    ADDR = tokens[-2]
+    ADDR = "0x" + tokens[-2]
     print ("ADDR:", ADDR)
     print ("executing: write_mmc.py ", ADDR, " " ,file)
     OSCALL = "write_mmc.py " + ADDR + " " + file

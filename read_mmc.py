@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 
-import sys, os
+import os
+import sys
 import serial
 import struct
 
-PORT       = "/dev/ttyACM0"
 BAUD       = 115200
 BASE_ADDR  = 0x11230000 # mtk-msdc.0
 BLOCK_SIZE = 512 # bytes
-
-# open port
-dev = serial.Serial(PORT, BAUD)
 
 
 # common definition
@@ -340,6 +337,19 @@ if __name__ == "__main__":
     addr = int(int(sys.argv[1], 0) / BLOCK_SIZE) # block addr
     size = int(int(sys.argv[2], 0) / BLOCK_SIZE) # num blocks
     filename = sys.argv[3]
+
+    # check port file
+    if not os.path.exists("comport.txt"):
+        sys.stderr.write(
+            "ERROR: Missing 'comport.txt', run handshake.py first\n")
+        sys.exit(1)
+
+    # get handshaked port
+    with open("comport.txt", 'r') as fin:
+        port = fin.read()
+
+    # open port
+    dev = serial.Serial(port, BAUD)
 
     # enable pio mode
     if msdc_dma_status():
