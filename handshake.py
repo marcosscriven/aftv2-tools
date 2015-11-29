@@ -92,7 +92,7 @@ if __name__ == "__main__":
     print("Handshake complete!")
 
     # save port to file
-    with open("comport.txt", "w") as out:
+    with open("comport.txt", 'w') as out:
         out.write(port)
 
 # vim: ai et ts=4 sts=4 sw=4

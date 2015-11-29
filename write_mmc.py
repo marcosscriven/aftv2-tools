@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 
-import sys, os
+import os
+import sys
 import serial
 import struct
 
-PORT       = "/dev/ttyACM0"
 BAUD       = 115200
 BASE_ADDR  = 0x11230000 # mtk-msdc.0
 BLOCK_SIZE = 512 # bytes
-
-# open port
-dev = serial.Serial(PORT, BAUD)
 
 
 # common definition
@@ -341,16 +338,36 @@ if __name__ == "__main__":
     size = int(os.path.getsize(sys.argv[2]) / BLOCK_SIZE) # num blocks
     filename = sys.argv[2]
 
+    # check port file
+    if not os.path.exists("comport.txt"):
+        sys.stderr.write(
+            "ERROR: Missing 'comport.txt', run handshake.py first\n")
+        sys.exit(1)
+
+    # get handshaked port
+    with open("comport.txt", 'r') as fin:
+        port = fin.read()
+
+    # open port
+    dev = serial.Serial(port, BAUD)
+
     # enable pio mode
     if msdc_dma_status():
         msdc_dma_off()
 
     with open(filename, 'rb') as input:
 
+        # reload saved addr
+        last_addr = 0
+        if os.path.exists("lastaddr.txt"):
+            with open("lastaddr.txt", 'r') as fin:
+                last_addr = int(fin.read(), 0)
+
         # walk address range
         for offset in range(size):
 
-            print("Addr: " + hex((addr + offset) * BLOCK_SIZE))
+            phys_addr = (addr + offset) * BLOCK_SIZE
+            print("Addr: " + hex(phys_addr))
 
             # read block from file
             block_data = []
@@ -358,8 +375,17 @@ if __name__ == "__main__":
                 word = struct.unpack('@I', input.read(4))[0]
                 block_data.append(word)
 
+            # check for resume
+            if last_addr >= phys_addr:
+                print("...Already done")
+                continue
+
             # write block data
             msdc_do_command(MMC_WRITE_BLOCK, addr + offset)
             msdc_pio_write(block_data)
+
+            # save addr to file
+            with open("lastaddr.txt", 'w') as fout:
+                fout.write(hex(phys_addr))
 
 # vim: ai et ts=4 sts=4 sw=4

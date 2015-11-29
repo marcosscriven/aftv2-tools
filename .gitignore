@@ -1,3 +1,4 @@
 *.img
 *.diff
 comport.txt
+lastaddr.txt
