@@ -38,7 +38,7 @@ exit /b
     set /a PHYS_ADDR= %BASE_ADDR% + %ADDR%
 
     rem # apply patch to then
-    write_mmc_win.py %PHYS_ADDR% %TMP_FILE%
+    write_mmc.py %PHYS_ADDR% %TMP_FILE%
 
     rem # patch success?
 	
