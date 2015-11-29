@@ -21,7 +21,7 @@ exit /b
     set /a PHYS_ADDR= %BASE_ADDR% + %ADDR%
 
     rem # Read version info
-	read_mmc_win.py %PHYS_ADDR% %LENGTH% %TMP_FILE%
+    read_mmc_win.py %PHYS_ADDR% %LENGTH% %TMP_FILE%
     find "5.0.3.1 (534011720)" %TMP_FILE% 
     rem # Version check success?
 	    if  %errorlevel% GEQ 1 (

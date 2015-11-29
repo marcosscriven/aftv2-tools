@@ -12,8 +12,9 @@ print ("executing: read_mmc_win.py 1356644352 512 ver_4B4EC000.img")
 OSCALL = "read_mmc_win.py 1356644352 512 ver_4B4EC000.img"
 #print (OSCALL)
 os.system(OSCALL)
-# find "5.0.3.1 (534011720)" %TMP_FILE%
-
+# find "5.0.3.1 (534011720)" ver_50DCC000.img
+if '5.0.3.1 (534011720)' in open('ver_4B4EC000.img').read():
+    print ('true')
 # Version check success? IF else
 
 
