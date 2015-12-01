@@ -102,10 +102,10 @@ if __name__ == "__main__":
     #print (OSCALL)
     os.system(OSCALL)
     # find version "5.0.3.1 (534011720)" in file ver_50DCC000.img
-    if '5.0.3.1 (534011720)X' in open('ver_50DCC000.img').read():
-        print ('Version check passed: 5.0.3.1 (534011720)')
+    if '5.0.3.1 (534011720)' in open('ver_50DCC000.img').read():
+        print ("Version check passed: 5.0.3.1 (534011720)")
     else:
-        print ('Version check failed: Not rootable with this method')
+        print ("Version check failed: Not rootable with this method")
         os.remove("comport.txt")
 
 # vim: ai et ts=4 sts=4 sw=4
