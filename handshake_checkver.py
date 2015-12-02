@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import os
 import time
 import serial
 import glob
@@ -62,6 +63,7 @@ def handshake ():
     check(write8(b'\x0a'), b'\xf5')
     check(write8(b'\x50'), b'\xaf')
     check(write8(b'\x05'), b'\xfa')
+    dev.close()
 
 if __name__ == "__main__":
 
@@ -95,5 +97,15 @@ if __name__ == "__main__":
     with open("comport.txt", 'w') as out:
         out.write(port)
 
-# vim: ai et ts=4 sts=4 sw=4
+    print ("Confirming AFTV2 OS Version is correct...")
+    OSCALL = "read_mmc.py 0x50DCC000 512 ver_50DCC000.img"
+    #print (OSCALL)
+    os.system(OSCALL)
+    # find version "5.0.3.1 (534011720)" in file ver_50DCC000.img
+    if '5.0.3.1 (534011720)' in open('ver_50DCC000.img').read():
+        print ("Version check passed: 5.0.3.1 (534011720)")
+    else:
+        print ("Version check failed: Not rootable with this method")
+        os.remove("comport.txt")
 
+# vim: ai et ts=4 sts=4 sw=4
