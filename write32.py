@@ -4,9 +4,19 @@ import sys, os
 import serial
 import struct
 
-PORT = "/dev/ttyACM0"
 BAUD = 115200
 
+# check port file
+if not os.path.exists("comport.txt"):
+    sys.stderr.write(
+        "ERROR: Missing 'comport.txt', run handshake.py first\n")
+    sys.exit(1)
+
+# get handshaked port
+with open("comport.txt", 'r') as fin:
+    port = fin.read()
+
+# open port
 dev = serial.Serial(PORT, BAUD)
 
 def print_hex_byte (data):
