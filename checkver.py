@@ -1,23 +1,42 @@
 #!/usr/bin/env python3
 
-import os
-import time
-import serial
 import sys
-import glob
-import re
+import subprocess
 
-# read_mmc_win.py 1356644352 512 ver_4B4EC000.img
-print ("executing: read_mmc.py 0x50DCC000 512 ver_50DCC000.img")
-OSCALL = "read_mmc.py 0x50DCC000 512 ver_50DCC000.img"
-#print (OSCALL)
-os.system(OSCALL)
-# find "5.0.3.1 (534011720)" ver_50DCC000.img
-if '5.0.3.1 (534011720)' in open('ver_50DCC000.img').read():
-    print ('true')
-# Version check success? IF else
+BUILDPROP_ADDR = 0x50dcc000  # phys addr
+BUILDPROP_SIZE = 4096 * 2    # 2 blocks
 
+# extract build.prop file
+print("Extracting build.prop...")
+subprocess.check_call(
+    ["./read_mmc.py",
+        hex(BUILDPROP_ADDR),
+        str(BUILDPROP_SIZE),
+        "check_version.img"])
 
+# analyze extracted data
+with open("check_version.img", "r") as file_in:
+
+    # look for fireos version
+    for line in file_in:
+        if line.startswith("ro.build.version.fireos="):
+
+            # extract version
+            version = line.rstrip().split("=")[1]
+
+            # check if rootable
+            if version == "5.0.3.1":
+                break
+            else:
+                print("NO, This device is not rootable (version = {0})".format(version))
+                sys.exit(1)
+
+    # we didn't find version
+    else:
+        sys.stderr.write(
+            "ERROR: Extracted data does not contain build.prop\n")
+        sys.exit(1)
+
+print("YES, This device is rootable")
 
 # vim: ai et ts=4 sts=4 sw=4
-

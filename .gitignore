@@ -1,4 +1,8 @@
+# temp files
 *.img
 *.diff
 comport.txt
 lastaddr.txt
+
+# editor files
+*.swp
