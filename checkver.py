@@ -9,7 +9,8 @@ BUILDPROP_SIZE = 4096 * 2    # 2 blocks
 # extract build.prop file
 print("Extracting build.prop...")
 subprocess.check_call(
-    ["./read_mmc.py",
+    [sys.executable,
+        "./read_mmc.py",
         hex(BUILDPROP_ADDR),
         str(BUILDPROP_SIZE),
         "check_version.img"])
