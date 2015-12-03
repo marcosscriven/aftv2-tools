@@ -5,6 +5,7 @@ import subprocess
 
 BUILDPROP_ADDR = 0x50dcc000  # phys addr
 BUILDPROP_SIZE = 4096 * 2    # 2 blocks
+CHECK_VERSION = "5.0.3.1"
 
 # extract build.prop file
 print("Extracting build.prop...")
@@ -26,7 +27,7 @@ with open("check_version.img", "r") as file_in:
             version = line.rstrip().split("=")[1]
 
             # check if rootable
-            if version == "5.0.3.1":
+            if version == CHECK_VERSION:
                 break
             else:
                 print("NO, This device is not rootable (version = {0})".format(version))
