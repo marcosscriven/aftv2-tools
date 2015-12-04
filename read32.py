@@ -17,7 +17,7 @@ with open("comport.txt", 'r') as fin:
     port = fin.read()
 
 # open port
-dev = serial.Serial(PORT, BAUD)
+dev = serial.Serial(port, BAUD)
 
 def print_hex_byte (data):
 
