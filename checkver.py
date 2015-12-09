@@ -11,7 +11,7 @@ CHECK_VERSION = "5.0.3.1"
 print("Extracting build.prop...")
 subprocess.check_call(
     [sys.executable,
-        "./read_mmc.py",
+        "read_mmc.py",
         hex(BUILDPROP_ADDR),
         str(BUILDPROP_SIZE),
         "check_version.img"])

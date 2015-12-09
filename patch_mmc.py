@@ -1,33 +1,29 @@
 #!/usr/bin/env python3
 
-import os
-import time
-import serial
 import sys
-import glob
 import re
+import glob
+import subprocess
 
-# Patch MMC logic
-filelist = (sorted(glob.glob('patch_*.img')))
+# patch file patterns
+patch_list = sorted(glob.glob("patch_*.img"))
+patch_regex = re.compile(r'patch_([0-9a-f]+)\.img')
 
-for file in filelist:
-    print ("current file: ", file)
-    #fo = open(file, "r")
-    #contents = fo.read()
-    #fo.close()
-    #print (file, " contents:")
-    #print (contents)
-    # tokenize filename splitting on _ and . to find pysh addr 2nd last token
-    tokens = re.split("[_.]", file)
-    #print ("tokens:", tokens)
-    ADDR = "0x" + tokens[-2]
-    print ("ADDR:", ADDR)
-    print ("executing: write_mmc.py ", ADDR, " " ,file)
-    OSCALL = "write_mmc.py " + ADDR + " " + file
-    print (OSCALL)
-    os.system(OSCALL)
+for patch in patch_list:
 
+    print("Patching {0}...".format(patch))
 
+    # extract address
+    match = patch_regex.match(patch)
+    if not match:
+        sys.stderr.write(
+            "ERROR: '{0}' does not match expected pattern\n".format(patch))
+        sys.exit(1)
+
+    phys_addr = int(match.group(1), 16)
+
+    # apply patch file
+    subprocess.check_call([
+        sys.executable, "write_mmc.py", hex(phys_addr), patch])
 
 # vim: ai et ts=4 sts=4 sw=4
-
