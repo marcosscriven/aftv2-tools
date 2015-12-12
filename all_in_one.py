@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import time
+import re
 import glob
 import struct
 import serial
@@ -439,6 +441,59 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print("FireOS version ok, device is rootable!")
+
+    # reload saved addr
+    last_addr = 0
+    if os.path.exists("lastaddr.txt"):
+        with open("lastaddr.txt", 'r') as fin:
+            last_addr = int(fin.read(), 0)
+
+    # patch file patterns
+    patch_list = sorted(glob.glob("patch_*.img"))
+    patch_regex = re.compile(r'patch_([0-9a-f]+)\.img')
+
+    # process patch files
+    for patch in patch_list:
+
+        print("Patching {0}...".format(patch))
+
+        # extract address
+        match = patch_regex.match(patch)
+        if not match:
+            sys.stderr.write(
+                "ERROR: '{0}' does not match expected pattern\n".format(patch))
+            sys.exit(1)
+
+        addr = int(int(match.group(1), 16) / BLOCK_SIZE) # block addr
+        size = int(os.path.getsize(patch) / BLOCK_SIZE) # num blocks
+
+        # apply patch file
+        with open(patch, 'rb') as fpatch:
+
+            # walk address range
+            for offset in range(size):
+
+                phys_addr = (addr + offset) * BLOCK_SIZE
+                print("Addr: " + hex(phys_addr))
+
+                # read block from file
+                block_data = []
+                for _ in range(BLOCK_SIZE >> 2):
+                    word = struct.unpack('@I', fpatch.read(4))[0]
+                    block_data.append(word)
+
+                # check for resume
+                if last_addr >= phys_addr:
+                    print("...Already done")
+                    continue
+
+                # write block data
+                msdc_do_command(MMC_WRITE_BLOCK, addr + offset)
+                msdc_pio_write(block_data)
+
+                # save addr to file
+                with open("lastaddr.txt", 'w') as fout:
+                    fout.write(hex(phys_addr))
 
     # all done!
     print("Congrats, rooting complete!")
