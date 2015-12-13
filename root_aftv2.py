@@ -12,6 +12,7 @@ BAUD = 115200
 BASE_ADDR = 0x11230000       # mtk-msdc.0
 BLOCK_SIZE = 512             # bytes
 
+SYSTEM_ADDR = 0x058e0000     # part addr
 BUILDPROP_ADDR = 0x50dcc000  # phys addr
 BUILDPROP_SIZE = 4096 * 2    # 2 blocks
 CHECK_VERSION = "5.0.3.1"
@@ -452,6 +453,11 @@ if __name__ == "__main__":
     patch_list = sorted(glob.glob("patch_*.img"))
     patch_regex = re.compile(r'patch_([0-9a-f]+)\.img')
 
+    # check patch list
+    if len(patch_list) == 0:
+        sys.stderr.write("ERROR: No patch files were found\n")
+        sys.exit(1)
+
     # process patch files
     for patch in patch_list:
 
@@ -464,8 +470,14 @@ if __name__ == "__main__":
                 "ERROR: '{0}' does not match expected pattern\n".format(patch))
             sys.exit(1)
 
-        addr = int(int(match.group(1), 16) / BLOCK_SIZE) # block addr
+        patch_addr = int(match.group(1), 16)
+        addr = int(patch_addr / BLOCK_SIZE)             # block addr
         size = int(os.path.getsize(patch) / BLOCK_SIZE) # num blocks
+
+        # check patch addr
+        if patch_addr < SYSTEM_ADDR:
+            sys.stderr.write("ERROR: Patch address is out of range\n")
+            sys.exit(1)
 
         # apply patch file
         with open(patch, 'rb') as fpatch:
