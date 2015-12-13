@@ -29,9 +29,9 @@ exit /b
     set LENGTH=%2
     set trimaddr=%ADDR:~2%
     set TMP_FILE=patch_%trimaddr%.img
-	
+
     echo Patching %TMP_FILE%...
-	set /a ADDR=%ADDR% + 0
+    set /a ADDR=%ADDR% + 0
     rem # extract patched region
     dd if=%BASE_IMG% of=%TMP_FILE% bs=1 skip=%ADDR% count=%LENGTH%
 
@@ -41,9 +41,9 @@ exit /b
     write_mmc.py %PHYS_ADDR% %TMP_FILE%
 
     rem # patch success?
-	
+
     if  %errorlevel% GEQ 1 echo error %errorlevel%
     echo.
-	exit /b
+    exit /b
 
 rem vim: ai et ts=4 sts=4 sw=4

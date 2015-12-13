@@ -41,14 +41,14 @@ At this point plug in power to your AFTV2 and if drivers were installed successf
 Found port = COM19
 Handshake complete!
 
-Now you are ready to run patch_mmc_win.bat: (don't unplug anything)
-3: Run patch_mmc_win.bat
+Now you are ready to run patch_mmc.bat: (don't unplug anything)
+3: Run patch_mmc.bat
 
 wait 2 hours like linux root process.... if all goes well.... profit!!
 
-Note: If it hangs for a long time without changing addresses it is probably stuck.  You can safely restart this process.  Future revisions will enable recovery.
+Note: If it hangs for a long time without changing addresses it is probably stuck.  You can safely restart this process.
 
-Aditional info: 
+Aditional info:
 If you want to do the adb steps to disable updates using the a-a cable you can install the kindle drivers manually:
 http://forum.xda-developers.com/showthread.php?t=2544410
 
@@ -63,6 +63,4 @@ http://stackoverflow.com/questions/12090503/listing-available-com-ports-with-pyt
 Also, if you want the full aftv2 tools from zeroepoch you can get them from windows too, that's what I used to do the porting:
  to get the tools via windows machine:
 https://gitlab.com/zeroepoch/aftv2-tools
- click download, extract zip to folder aftv2-tools 
-
-
+ click download, extract zip to folder aftv2-tools
