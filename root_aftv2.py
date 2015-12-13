@@ -9,13 +9,9 @@ import struct
 import serial
 
 BAUD = 115200
-BASE_ADDR = 0x11230000       # mtk-msdc.0
-BLOCK_SIZE = 512             # bytes
-
-SYSTEM_ADDR = 0x058e0000     # part addr
-BUILDPROP_ADDR = 0x50dcc000  # phys addr
-BUILDPROP_SIZE = 4096 * 2    # 2 blocks
-CHECK_VERSION = "5.0.3.1"
+BASE_ADDR = 0x11230000    # mtk-msdc.0
+BLOCK_SIZE = 512          # bytes
+SYSTEM_ADDR = 0x058e0000  # part addr
 
 
 # common definition
@@ -419,8 +415,21 @@ if __name__ == "__main__":
     print("Handshake complete!")
     print("Extracting build.prop...")
 
+    # check version file
+    if not os.path.exists("version.txt"):
+        sys.stderr.write(
+            "ERROR: Missing version check file 'version.txt'\n")
+        sys.exit(1)
+
+    # get version check values
+    with open("version.txt", 'r') as fin:
+        fields = fin.read().split()
+        buildprop_addr = int(fields[0], 0)
+        buildprop_size = int(fields[1], 0)
+        check_version = fields[2]
+
     # look for fireos version
-    build_prop = get_string(BUILDPROP_ADDR, BUILDPROP_SIZE)
+    build_prop = get_string(buildprop_addr, buildprop_size)
     for line in build_prop.split("\n"):
 
         if line.startswith("ro.build.version.fireos="):
@@ -429,7 +438,7 @@ if __name__ == "__main__":
             version = line.split("=")[1]
 
             # check if rootable
-            if version == CHECK_VERSION:
+            if version == check_version:
                 break
             else:
                 print("This device is not rootable (version = {0})".format(version))

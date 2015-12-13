@@ -1,19 +1,29 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import subprocess
 
-BUILDPROP_ADDR = 0x50dcc000  # phys addr
-BUILDPROP_SIZE = 4096 * 2    # 2 blocks
-CHECK_VERSION = "5.0.3.1"
+# check version file
+if not os.path.exists("version.txt"):
+    sys.stderr.write(
+        "ERROR: Missing version check file 'version.txt'\n")
+    sys.exit(1)
+
+# get version check values
+with open("version.txt", 'r') as fin:
+    fields = fin.read().split()
+    buildprop_addr = int(fields[0], 0)
+    buildprop_size = int(fields[1], 0)
+    check_version = fields[2]
 
 # extract build.prop file
 print("Extracting build.prop...")
 subprocess.check_call(
     [sys.executable,
         "read_mmc.py",
-        hex(BUILDPROP_ADDR),
-        str(BUILDPROP_SIZE),
+        hex(buildprop_addr),
+        str(buildprop_size),
         "check_version.img"])
 
 # analyze extracted data
@@ -27,7 +37,7 @@ with open("check_version.img", "r") as file_in:
             version = line.rstrip().split("=")[1]
 
             # check if rootable
-            if version == CHECK_VERSION:
+            if version == check_version:
                 break
             else:
                 print("NO, This device is not rootable (version = {0})".format(version))
