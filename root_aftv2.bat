@@ -7,7 +7,7 @@ echo.
 
 root_aftv2.exe
 
-if errorlevel 0 (
+if %errorlevel% EQU 0 (
     echo Power cycle the AFTV2 to finish the rooting process
 ) else (
     echo The rooting process has FAILED!
