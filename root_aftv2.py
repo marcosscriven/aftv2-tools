@@ -509,6 +509,5 @@ if __name__ == "__main__":
 
     # all done!
     print("Congrats, rooting complete!")
-    input("Press enter to quit...\n")
 
 # vim: ai et ts=4 sts=4 sw=4
