@@ -27,10 +27,13 @@ subprocess.check_call(
         "check_version.img"])
 
 # analyze extracted data
-with open("check_version.img", "r") as file_in:
+with open("check_version.img", 'rb') as file_in:
+
+    # convert file to string
+    build_prop = file_in.read().decode(errors='ignore')
 
     # look for fireos version
-    for line in file_in:
+    for line in build_prop.split("\n"):
         if line.startswith("ro.build.version.fireos="):
 
             # extract version
