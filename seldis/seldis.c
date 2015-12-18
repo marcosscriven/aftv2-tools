@@ -22,12 +22,12 @@ static int __init seldis_init (void) {
         kallsyms_lookup_name("sel_write_enforce");
 
     /*
-      Procedure for finding offset to selinux_enforcing (5.0.3.1):
+      Procedure for finding offset to selinux_enforcing (5.0.4):
 
       aarch64-linux-android-objdump -D -b binary -m aarch64 --adjust-vma=0xffffffc000080000 kernel
-      sel_write_enforce @ ffffffc000277e04
-      ffffffc000277ec4:   900068b7    adrp    x23, 0xffffffc000f8b000 # +0xd14000
-      ffffffc000277ecc:   b948cee0    ldr w0, [x23,#2252] # +0x8cc
+      sel_write_enforce @ ffffffc000277e00
+      ffffffc000277ec0:   900068b7    adrp    x23, 0xffffffc000f8b000 # +0xd14000
+      ffffffc000277ec8:   b948cee0    ldr w0, [x23,#2252] # +0x8cc
     */
 
     // compute selinux_enforcing address
