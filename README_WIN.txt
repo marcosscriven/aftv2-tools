@@ -3,8 +3,8 @@ Prereqs
 1: Thank zeroepoch for the process and not obfuscating the code =) porting couldn't have been done without the base process
 
 2: Get the images and save them to the same folder you extract this (aftv2-tools):
-http://download.zeroepoch.com/aftv2/5.0.3.1/system.root.img.gz
-http://download.zeroepoch.com/aftv2/5.0.3.1/system.diff.gz
+http://download.zeroepoch.com/aftv2/<version>/system.root.img.gz
+http://download.zeroepoch.com/aftv2/<version>/system.diff.gz
 (I use 7zip to unzip the .gz files in windows: http://www.7-zip.org/ )
 
 3: Install Python
@@ -21,7 +21,7 @@ python -m pip install pyserial
 
 
 5: Install VCOM drivers:
-the .inf file i used is in this folder, but here are the instructions:
+the .inf file i used is in win_drivers, but here are the instructions:
 http://thebroodle.com/microsoft/windows/how-to-install-mtk65xx-preloader-usb-vcom-drivers-in-windows/#arvlbdata
 
 Plug the usb a-a cable in to the fire tv and the pc first, then plug in power.
@@ -46,7 +46,7 @@ Now you are ready to run patch_mmc.bat: (don't unplug anything)
 
 wait 2 hours like linux root process.... if all goes well.... profit!!
 
-Note: If it hangs for a long time without changing addresses it is probably stuck.  You can safely restart this process.
+Note: If it hangs for a long time without changing addresses it is probably stuck.  You can safely restart this process, it will resume.
 
 Aditional info:
 If you want to do the adb steps to disable updates using the a-a cable you can install the kindle drivers manually:
@@ -55,7 +55,7 @@ http://forum.xda-developers.com/showthread.php?t=2544410
 Otherwise you should be able to do adb via the network if you have that connected
 
 DD for win, is already in this folder, and should just work with the exe in the ported script:
-GNU license included in the zip downloaded from: http://www.chrysocome.net/dd
+Downloaded from: http://www.chrysocome.net/dd, GNU licensed
 
 Thanks to this link at stackoverflow for info on listing windows com ports:
 http://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python

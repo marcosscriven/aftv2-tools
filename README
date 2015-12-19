@@ -10,7 +10,8 @@ NOTE: Cut and restore power to exit the preloader
 
 Once you have root you can just write the file to the partition to restore.
 
-adb$ dd if=system.orig.img of=/dev/block/platform/mtk-msdc.0/by-name/system
+adb$ dd if=system.orig.img of=/dev/block/platform/mtk-msdc.0/by-name/system bs=1m
+adb$ sync
 adb$ reboot
 
 
