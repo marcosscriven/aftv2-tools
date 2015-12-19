@@ -18,14 +18,13 @@ for I in $(seq 1 2 ${#DIFF_DATA[@]}) ; do
 
     ADDR="$(( ${DIFF_DATA[$((I - 1))]} ))" # hex->dec
     LENGTH="${DIFF_DATA[$I]}"
+    PHYS_ADDR="$((BASE_ADDR + ADDR))"
 
-    TMP_FILE="patch_$(printf "%08x" "${ADDR}").img"
+    TMP_FILE="patch_$(printf "%08x" "${PHYS_ADDR}").img"
     echo "Patching ${TMP_FILE}..."
 
     # extract patched region
     dd if="${BASE_IMG}" of="${TMP_FILE}" bs=1 skip="${ADDR}" count="${LENGTH}"
-
-    PHYS_ADDR="$((BASE_ADDR + ADDR))"
 
     # apply patch to mmc
     ./write_mmc.py "${PHYS_ADDR}" "${TMP_FILE}"
