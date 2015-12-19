@@ -27,18 +27,21 @@ exit /b
 :subroutine
     set ADDR=%1
     set LENGTH=%2
-    set trimaddr=%ADDR:~2%
-    set TMP_FILE=patch_%trimaddr%.img
+    set /a PHYS_ADDR= %BASE_ADDR% + %ADDR%
+    # convert PHYS_ADDR to hex
+    call cmd /c exit /b %PHYS_ADDR%
+    set PHYS_ADDRx=%=exitcode%
+	
+    set TMP_FILE=patch_%PHYS_ADDRx%.img
 
     echo Patching %TMP_FILE%...
     set /a ADDR=%ADDR% + 0
     rem # extract patched region
     dd if=%BASE_IMG% of=%TMP_FILE% bs=1 skip=%ADDR% count=%LENGTH%
 
-    set /a PHYS_ADDR= %BASE_ADDR% + %ADDR%
-
+    
     rem # apply patch to then
-    write_mmc.py %PHYS_ADDR% %TMP_FILE%
+    write_mmc.py 0x%PHYS_ADDRx% %TMP_FILE%
 
     rem # patch success?
 
