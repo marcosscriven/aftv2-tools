@@ -31,7 +31,7 @@ exit /b
     # convert PHYS_ADDR to hex
     call cmd /c exit /b %PHYS_ADDR%
     set PHYS_ADDRx=%=exitcode%
-	
+
     set TMP_FILE=patch_%PHYS_ADDRx%.img
 
     echo Patching %TMP_FILE%...
@@ -39,7 +39,6 @@ exit /b
     rem # extract patched region
     dd if=%BASE_IMG% of=%TMP_FILE% bs=1 skip=%ADDR% count=%LENGTH%
 
-    
     rem # apply patch to then
     write_mmc.py 0x%PHYS_ADDRx% %TMP_FILE%
 

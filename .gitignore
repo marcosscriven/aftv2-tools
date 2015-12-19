@@ -3,6 +3,7 @@
 *.diff
 comport.txt
 lastaddr.txt
+changed.txt
 
 # editor files
 *.swp
