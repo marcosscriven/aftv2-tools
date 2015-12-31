@@ -516,6 +516,9 @@ if __name__ == "__main__":
                 with open("lastaddr.txt", 'w') as fout:
                     fout.write(hex(phys_addr))
 
+    # remove checkpoint file
+    os.remove("lastaddr.txt")
+
     # all done!
     print("Congrats, rooting complete!")
 
