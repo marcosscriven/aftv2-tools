@@ -86,3 +86,8 @@ chmod 755 /data/daemonsu
 You can then run /data/su to become root and then run the normal SuperSU update
 script. To run the update script you will need to create /tmp and mount it as
 tmpfs and also have unzip in your path.
+
+=== References ===
+
+* http://mattboyer.github.io/PYaffs/2014/07/31/Hacklog%233.html
+* https://sturmflut.github.io/mediatek/2015/07/04/mediatek-details-partitions-and-preloader/
