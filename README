@@ -1,3 +1,7 @@
+*** WARNING: These tools only work on AFTV2 devices running 5.0.5.1 or older ***
+
+http://www.aftvnews.com/software-version-5-2-1-0-blocks-rooting-via-a-to-a-usb-cable-on-fire-tv-2/#comment-280355
+
 === Patching a Partition ===
 
 sh$ adb reboot ; ./handshake.py
